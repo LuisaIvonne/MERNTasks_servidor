@@ -14,6 +14,7 @@ router.post('/',
     proyectoController.crearProyecto
 );
 
+//Obtener proyectos
 router.get('/',
     auth,
     proyectoController.obtenerProyectos

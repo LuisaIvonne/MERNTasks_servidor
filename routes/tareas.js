@@ -15,9 +15,16 @@ router.post('/',
     tareaController.crearTarea
 )
 
+//obtener las tareas por proyecto
 router.get('/',
     auth,
     tareaController.obtenerTareas
-)
+);
+
+//actualizar tarea
+router.put('/:id',
+    auth,
+    tareaController.actualizarTareas
+);
 
 module.exports = router;

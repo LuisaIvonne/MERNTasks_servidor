@@ -54,7 +54,45 @@ exports.obtenerTareas = async (req, res) => {
         //Obtener las tareas por proyecto
         const tarea = await Tarea.find({proyecto});
         res.json({tarea});
-        
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
+//Actualizar tarea
+exports.actualizarTareas = async (req, res) => {
+    try {
+        //Extraer el proyecto y comprobar si existe
+        const {proyecto, nombre, estado} = req.body;
+
+        //Si la tarea existe o no
+        let tareaExiste = await Tarea.findById(req.params.id);
+
+        if(!tareaExiste){
+            return res.status(404).json({msg: 'No existe esa tarea'});
+        }
+
+        //extraer proyecto
+        const existeProyecto = await Proyecto.findById(proyecto);
+
+        //Revisar si el proyecto actual pertenece al usuario autenticado
+        if(!existeProyecto.propietario.toString() !== req.usuario.id){
+            return res.status(404).json({msg: 'Proyecto no encontrado'});
+        }
+
+        //Crear un objeto con la nueva información
+        const nuevaTarea = {};
+        if(nombre) nuevaTarea.nombre = nombre;
+
+        if(estado) nuevaTarea.estado =  estado;
+
+        //Guardar la tarea
+        tareaExiste = await Tarea.findOneAndUpdate({_id: req.params.id}, nuevaTarea, {new:true});
+
+        res.json({tareaExiste});
+
     } catch (error) {
         console.log(error);
         res.status(500).send('Hubo un error');
